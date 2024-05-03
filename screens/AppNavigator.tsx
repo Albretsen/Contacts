@@ -15,23 +15,31 @@ const Stack = createNativeStackNavigator<ParamList>();
 export const AppNavigator = () => {
     const { idToken, clearAuthTokens } = useAuth();
 
+    const renderHomeScreen = () => (
+        <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+                headerRight: () => (
+                    <Button onPress={clearAuthTokens}>Sign out</Button>
+                ),
+            }}
+        />
+    );
+
+    const renderAuthScreens = () => (
+        <>
+            {renderHomeScreen()}
+            <Stack.Screen name="View" component={ViewScreen} />
+            <Stack.Screen name="Edit" component={EditScreen} />
+            <Stack.Screen name="New contact" component={NewContactScreen} />
+        </>
+    );
+
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Home">
-                {idToken ? (
-                    <>
-                        <Stack.Screen name="Home" component={HomeScreen} options={{
-                            headerRight: () => {
-                                return (<Button onPress={clearAuthTokens}>Sign out</Button>)
-                            },
-                        }} />
-                        <Stack.Screen name="View" component={ViewScreen} />
-                        <Stack.Screen name="Edit" component={EditScreen} />
-                        <Stack.Screen name="New contact" component={NewContactScreen} />
-                    </>
-                ) : (
-                    <Stack.Screen name="Sign in" component={SignInScreen} />
-                )}
+                {idToken ? renderAuthScreens() : <Stack.Screen name="Sign in" component={SignInScreen} />}
             </Stack.Navigator>
         </NavigationContainer>
     );
