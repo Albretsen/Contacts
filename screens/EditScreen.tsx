@@ -10,6 +10,7 @@ import { useSnackbar } from '../hooks/useSnackbar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamList } from '../types/ParamList';
 import { LoadingFullScreen } from '../components/loading/LoadingFullScreen';
+import ConfirmDialog from '../components/dialog/ConfirmDialog';
 
 type EditScreenProps = NativeStackScreenProps<ParamList, 'Edit'>;
 
@@ -166,37 +167,31 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
                 onPress={() => setShowDeleteConfirmation(true)}
                 accessibilityLabel='Delete contact'
             />
-            <Portal>
-                <Dialog visible={showDeleteConfirmation} onDismiss={() => setShowDeleteConfirmation(false)}>
-                    <Dialog.Title>Confirm Deletion</Dialog.Title>
-                    <Dialog.Content>
-                        <Text>Are you sure you want to delete {contact.Info.Name}?</Text>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={() => setShowDeleteConfirmation(false)}>Cancel</Button>
-                        <Button onPress={handleDelete}>Delete</Button>
-                    </Dialog.Actions>
-                </Dialog>
-                <Dialog visible={showUnsavedChangesDialog} onDismiss={() => setShowUnsavedChangesDialog(false)}>
-                    <Dialog.Title>Unsaved Changes</Dialog.Title>
-                    <Dialog.Content>
-                        <Text>Are you sure you want to leave without saving changes?</Text>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={() => setShowUnsavedChangesDialog(false)}>Cancel</Button>
-                        <Button onPress={() => navigation.goBack()}>Leave</Button>
-                    </Dialog.Actions>
-                </Dialog>
-            </Portal>
+            <ConfirmDialog
+                visible={showDeleteConfirmation}
+                onDismiss={() => setShowDeleteConfirmation(false)}
+                onConfirm={handleDelete}
+                title="Confirm Deletion"
+                message={`Are you sure you want to delete ${contact.Info.Name}?`}
+            />
+            <ConfirmDialog
+                visible={showUnsavedChangesDialog}
+                onDismiss={() => setShowUnsavedChangesDialog(false)}
+                onConfirm={() => navigation.goBack()}
+                title="Unsaved Changes"
+                message="Are you sure you want to leave without saving changes?"
+            />
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
         flexDirection: 'column',
-        gap: 8
+        gap: 8,
+        paddingBottom: 8
     },
     textInput: {
         marginTop: 16

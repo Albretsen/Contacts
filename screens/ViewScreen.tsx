@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { Avatar, Text, FAB, Button } from 'react-native-paper';
+import { Avatar, Text, Button } from 'react-native-paper';
 import ContactButtons from '../components/buttons/ContactButton';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ export default function ViewScreen({ route, navigation}: ViewScreenProps) {
 
     const { data, isLoading } = useQuery({
         queryKey: ['contact', contact?.ID], 
-        queryFn: () => uniFetch(fetchContact, contact?.ID),
+        queryFn: () => uniFetch(fetchContact, contact?.ID)
     });
 
     useEffect(() => {

@@ -4,7 +4,6 @@ import { FlashList } from '@shopify/flash-list';
 import { ActivityIndicator } from 'react-native-paper';
 import ContactListItem from './ContactListItem';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAuth } from '../../contexts/AuthContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchContacts } from '../../services/api';
 import useAuthFetch from '../../services/auth';
@@ -16,7 +15,6 @@ interface ContactListProps {
 }
 
 export default function ContactList({ navigation, searchQuery }: ContactListProps) {
-    const { idToken } = useAuth();
     const { uniFetch } = useAuthFetch();
     const queryClient = useQueryClient();
 
@@ -25,8 +23,7 @@ export default function ContactList({ navigation, searchQuery }: ContactListProp
     const { data: contacts, error, isLoading } = useQuery({
         queryKey: ['contacts', searchQuery],
         queryFn: () => uniFetch(fetchContacts, searchQuery),
-        select: data => validateAndNormalizeContacts(data),
-        enabled: !!idToken
+        select: data => validateAndNormalizeContacts(data)
     });
 
     const onRefresh = useCallback(() => {
@@ -46,7 +43,7 @@ export default function ContactList({ navigation, searchQuery }: ContactListProp
             <FlashList
                 data={contacts}
                 renderItem={({ item }) => <ContactListItem contact={item} navigation={navigation} />}
-                keyExtractor={(item, index) => `contact-${index}`}
+                keyExtractor={(item, index) => `contact-${item.ID}`}
                 estimatedItemSize={100}
                 refreshControl={
                     <RefreshControl
