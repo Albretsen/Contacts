@@ -1,5 +1,5 @@
 import { useReducer, useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, ScrollView, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import useAuthFetch from '../services/auth';
@@ -112,7 +112,7 @@ export default function NewContactScreen({ navigation }: NewContactScreenProps) 
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1, paddingBottom: 16 }}
+            style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.select({ ios: 60, android: 78 })}
         >
@@ -127,6 +127,7 @@ export default function NewContactScreen({ navigation }: NewContactScreenProps) 
                         mode="outlined"
                     />
                 ))}
+                <View style={{ height: 16}}></View>
             </ScrollView>
         </KeyboardAvoidingView>
     );

@@ -122,7 +122,7 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1, paddingBottom: 16 }}
+            style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.select({ ios: 60, android: 78 })}
         >
@@ -138,6 +138,7 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
                             mode="outlined"
                         />
                     ))}
+                    <View style={{ height: 16}}></View>
                 </ScrollView>
                 <FAB
                     icon="delete"
