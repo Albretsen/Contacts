@@ -11,6 +11,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamList } from '../types/ParamList';
 import { LoadingFullScreen } from '../components/loading/LoadingFullScreen';
 import ConfirmDialog from '../components/dialog/ConfirmDialog';
+import { updateContactObj } from '../utility/updateContactObj';
 
 type EditScreenProps = NativeStackScreenProps<ParamList, 'Edit'>;
 
@@ -73,34 +74,7 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
     });
 
     const handleSave = () => {
-        const updatedContact: Contact = {
-            ID: contact.ID,
-            Info: {
-                ...contact.Info,
-                Name: state.name,
-                DefaultPhone: {
-                    ...contact.Info.DefaultPhone,
-                    CountryCode: state.phone.split(' ')[0],
-                    Number: state.phone.split(' ')[1]
-                },
-                DefaultEmail: {
-                    ...contact.Info.DefaultEmail,
-                    EmailAddress: state.email
-                },
-                InvoiceAddress: {
-                    ...contact.Info.InvoiceAddress,
-                    AddressLine1: state.address1,
-                    AddressLine2: state.address2,
-                    AddressLine3: state.address3,
-                    PostalCode: state.postalCode,
-                    City: state.city,
-                    Country: state.country,
-                    Region: state.region
-                }
-            }
-        };
-
-        mutation.mutate(updatedContact);
+        mutation.mutate(updateContactObj(contact, state));
     };
 
     useEffect(() => {
@@ -115,7 +89,7 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
                 setShowUnsavedChangesDialog(true);
                 return true;
             }
-            return false; 
+            return false;
         });
 
         return () => {
@@ -129,17 +103,17 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
 
     const handleDelete = async () => {
         try {
-        setIsDeleting(true);
-        await deleteContact(idToken || "", contact.ID || "");
-        queryClient.invalidateQueries({
-            queryKey: ['contacts']
-        });
-        showSnack(`${contact.Info.Name} has been deleted.`);
-        setIsDeleting(false);
-        navigation.navigate('Home');
-    } catch (error) {
-        showSnack("Error deleting contact.")
-    }
+            setIsDeleting(true);
+            await deleteContact(idToken || "", contact.ID || "");
+            queryClient.invalidateQueries({
+                queryKey: ['contacts']
+            });
+            showSnack(`${contact.Info.Name} has been deleted.`);
+            setIsDeleting(false);
+            navigation.navigate('Home');
+        } catch (error) {
+            showSnack("Error deleting contact.")
+        }
     };
 
     if (isDeleting) return <LoadingFullScreen message="Deleting" />;
