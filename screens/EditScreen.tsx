@@ -1,7 +1,7 @@
 import { useReducer, useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, BackHandler } from 'react-native';
 import { Contact } from '../types/Contact';
-import { TextInput, Button, Text, Dialog, Portal } from 'react-native-paper';
+import { TextInput, Button, Text, Dialog, Portal, FAB } from 'react-native-paper';
 import { updateContact, deleteContact } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
@@ -158,10 +158,14 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
                         mode="outlined"
                     />
                 ))}
-                <Button style={{ borderRadius: 8, marginVertical: 16 }} buttonColor="darkred" icon="delete" mode="contained" onPress={() => setShowDeleteConfirmation(true)}>
-                    Delete
-                </Button>
             </ScrollView>
+            <FAB
+                icon="delete"
+                style={styles.fab}
+                color="white"
+                onPress={() => setShowDeleteConfirmation(true)}
+                accessibilityLabel='Delete contact'
+            />
             <Portal>
                 <Dialog visible={showDeleteConfirmation} onDismiss={() => setShowDeleteConfirmation(false)}>
                     <Dialog.Title>Confirm Deletion</Dialog.Title>
@@ -196,5 +200,12 @@ const styles = StyleSheet.create({
     },
     textInput: {
         marginTop: 16
-    }
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "darkred",
+    },
 });
