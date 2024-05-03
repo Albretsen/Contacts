@@ -1,5 +1,5 @@
 import { useReducer, useState, useEffect } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import useAuthFetch from '../services/auth';
@@ -111,26 +111,32 @@ export default function NewContactScreen({ navigation }: NewContactScreenProps) 
     if (isSaving) return <LoadingFullScreen message="Saving" />
 
     return (
-        <ScrollView style={styles.scrollView}>
-            {Object.keys(initialState).map((key) => (
-                <TextInput
-                    key={key}
-                    style={styles.textInput}
-                    label={key.replace(/([A-Z])/g, ' $1').replace(/^./, match => match.toUpperCase())}
-                    value={state[key as keyof EditState]}
-                    onChangeText={(text) => handleChange(key as keyof EditState, text)}
-                    mode="outlined"
-                />
-            ))}
-        </ScrollView>
+        <KeyboardAvoidingView
+            style={{ flex: 1, paddingBottom: 16 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.select({ ios: 60, android: 78 })}
+        >
+            <ScrollView style={styles.scrollView}>
+                {Object.keys(initialState).map((key) => (
+                    <TextInput
+                        key={key}
+                        style={styles.textInput}
+                        label={key.replace(/([A-Z])/g, ' $1').replace(/^./, match => match.toUpperCase())}
+                        value={state[key as keyof EditState]}
+                        onChangeText={(text) => handleChange(key as keyof EditState, text)}
+                        mode="outlined"
+                    />
+                ))}
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     scrollView: {
-        flex: 1, 
+        flex: 1,
         marginHorizontal: 16,
-        flexDirection: 'column', 
+        flexDirection: 'column',
         gap: 8
     },
     textInput: {

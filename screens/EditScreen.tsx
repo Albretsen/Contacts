@@ -1,5 +1,5 @@
 import { useReducer, useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, BackHandler } from 'react-native';
+import { StyleSheet, ScrollView, View, BackHandler, KeyboardAvoidingView, Platform } from 'react-native';
 import { Contact } from '../types/Contact';
 import { TextInput, Button, Text, Dialog, Portal, FAB } from 'react-native-paper';
 import { updateContact, deleteContact } from '../services/api';
@@ -121,41 +121,47 @@ export default function EditScreen({ route, navigation }: EditScreenProps) {
     if (mutation.isPending) return <LoadingFullScreen message="Saving" />;
 
     return (
-        <View style={{ flex: 1, marginHorizontal: 16 }}>
-            <ScrollView style={styles.scrollView}>
-                {Object.keys(initialState).map((key) => (
-                    <TextInput
-                        key={key}
-                        style={styles.textInput}
-                        label={key.replace(/([A-Z])/g, ' $1').replace(/^./, match => match.toUpperCase())}
-                        value={state[key]}
-                        onChangeText={(text) => handleChange(key, text)}
-                        mode="outlined"
-                    />
-                ))}
-            </ScrollView>
-            <FAB
-                icon="delete"
-                style={styles.fab}
-                color="white"
-                onPress={() => setShowDeleteConfirmation(true)}
-                accessibilityLabel='Delete contact'
-            />
-            <ConfirmDialog
-                visible={showDeleteConfirmation}
-                onDismiss={() => setShowDeleteConfirmation(false)}
-                onConfirm={handleDelete}
-                title="Confirm Deletion"
-                message={`Are you sure you want to delete ${contact.Info.Name}?`}
-            />
-            <ConfirmDialog
-                visible={showUnsavedChangesDialog}
-                onDismiss={() => setShowUnsavedChangesDialog(false)}
-                onConfirm={() => navigation.goBack()}
-                title="Unsaved Changes"
-                message="Are you sure you want to leave without saving changes?"
-            />
-        </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1, paddingBottom: 16 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.select({ ios: 60, android: 78 })}
+        >
+            <View style={{ flex: 1, marginHorizontal: 16 }}>
+                <ScrollView style={styles.scrollView}>
+                    {Object.keys(initialState).map((key) => (
+                        <TextInput
+                            key={key}
+                            style={styles.textInput}
+                            label={key.replace(/([A-Z])/g, ' $1').replace(/^./, match => match.toUpperCase())}
+                            value={state[key]}
+                            onChangeText={(text) => handleChange(key, text)}
+                            mode="outlined"
+                        />
+                    ))}
+                </ScrollView>
+                <FAB
+                    icon="delete"
+                    style={styles.fab}
+                    color="white"
+                    onPress={() => setShowDeleteConfirmation(true)}
+                    accessibilityLabel='Delete contact'
+                />
+                <ConfirmDialog
+                    visible={showDeleteConfirmation}
+                    onDismiss={() => setShowDeleteConfirmation(false)}
+                    onConfirm={handleDelete}
+                    title="Confirm Deletion"
+                    message={`Are you sure you want to delete ${contact.Info.Name}?`}
+                />
+                <ConfirmDialog
+                    visible={showUnsavedChangesDialog}
+                    onDismiss={() => setShowUnsavedChangesDialog(false)}
+                    onConfirm={() => navigation.goBack()}
+                    title="Unsaved Changes"
+                    message="Are you sure you want to leave without saving changes?"
+                />
+            </View>
+        </KeyboardAvoidingView>
     );
 }
 
